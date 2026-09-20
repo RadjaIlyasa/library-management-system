@@ -1,5 +1,13 @@
 const API_URL = "http://localhost:5000/api";
 
+function showToast(pesan, isError = false) {
+  const toast = document.querySelector("#toast");
+  toast.textContent = pesan;
+  toast.classList.toggle("error", isError);
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
 /* =========================================
    BUKU (tambah, tampil, edit, hapus)
 ========================================= */
@@ -110,6 +118,7 @@ async function hapusBuku(id) {
   if (!confirm("Yakin mau hapus buku ini?")) return;
   await fetch(`${API_URL}/buku/${id}`, { method: "DELETE" });
   loadBuku();
+  showToast("Buku berhasil dihapus");
 }
 
 /* =========================================
@@ -222,6 +231,7 @@ document.querySelector("#form-peminjaman").addEventListener("submit", async (e) 
   loadBuku();
   loadDropdownBuku();
   loadPeminjaman();
+  showToast("Buku berhasil dipinjamkan");
 });
 
 async function kembalikanBuku(id) {
