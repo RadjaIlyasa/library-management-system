@@ -4,10 +4,15 @@ const API_URL = "http://localhost:5000/api";
    BUKU (tambah, tampil, edit, hapus)
 ========================================= */
 
+let daftarBukuCache = []; // nyimpen data buku terakhir biar bisa difilter tanpa fetch ulang
+
 async function loadBuku() {
   const res = await fetch(`${API_URL}/buku`);
-  const data = await res.json();
+  daftarBukuCache = await res.json();
+  renderTabelBuku(daftarBukuCache);
+}
 
+function renderTabelBuku(data) {
   const tbody = document.querySelector("#tabel-buku tbody");
   tbody.innerHTML = "";
 
@@ -26,6 +31,14 @@ async function loadBuku() {
     tbody.appendChild(tr);
   });
 }
+
+document.querySelector("#search-buku").addEventListener("input", (e) => {
+  const kata = e.target.value.toLowerCase();
+  const hasil = daftarBukuCache.filter(
+    (b) => b.judul.toLowerCase().includes(kata) || b.penulis.toLowerCase().includes(kata)
+  );
+  renderTabelBuku(hasil);
+});
 
 async function loadKategori() {
   const res = await fetch(`${API_URL}/kategori`);
@@ -148,9 +161,19 @@ async function loadDropdownBuku() {
   const data = await res.json();
   const select = document.querySelector("#pinjam_id_buku");
   select.innerHTML = data
-    .map((b) => `<option value="${b.id_buku}">${b.judul} (stok: ${b.stok})</option>`)
+    .map((b) => `<option value="${b.id_buku}" ${b.stok === 0 ? "disabled" : ""}>${b.judul} (stok: ${b.stok})</option>`)
     .join("");
+  cekStokTombolPinjam();
 }
+
+// Nonaktifkan tombol "Pinjamkan" kalau opsi yang lagi kepilih di dropdown stoknya 0
+function cekStokTombolPinjam() {
+  const select = document.querySelector("#pinjam_id_buku");
+  const opsiTerpilih = select.options[select.selectedIndex];
+  document.querySelector("#btn-pinjam").disabled = !opsiTerpilih || opsiTerpilih.disabled;
+}
+
+document.querySelector("#pinjam_id_buku").addEventListener("change", cekStokTombolPinjam);
 
 async function loadPeminjaman() {
   const res = await fetch(`${API_URL}/peminjaman`);
