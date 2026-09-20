@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sistem Perpustakaan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📚 Sistem Perpustakaan</h1>
+
+  <section>
+    <h2 id="judul-form-buku">Tambah Buku</h2>
+    <form id="form-buku">
+      <input type="hidden" id="edit-id-buku">
+      <input type="text" id="judul" placeholder="Judul buku" required>
+      <input type="text" id="penulis" placeholder="Penulis" required>
+      <select id="id_kategori"></select>
+      <input type="number" id="stok" placeholder="Stok" min="0" required>
+      <button type="submit" id="btn-submit-buku">Tambah</button>
+      <button type="button" id="btn-batal-edit" style="display:none;">Batal</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Daftar Buku</h2>
+    <table id="tabel-buku">
+      <thead>
+        <tr>
+          <th>Judul</th><th>Penulis</th><th>Kategori</th><th>Stok</th><th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Tambah Anggota</h2>
+    <form id="form-anggota">
+      <input type="text" id="nama_anggota" placeholder="Nama anggota" required>
+      <input type="text" id="alamat" placeholder="Alamat">
+      <input type="text" id="no_hp" placeholder="No HP">
+      <button type="submit">Tambah</button>
+    </form>
+    <table id="tabel-anggota">
+      <thead>
+        <tr><th>Nama</th><th>Alamat</th><th>No HP</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Peminjaman Buku</h2>
+    <form id="form-peminjaman">
+      <select id="pinjam_id_buku"></select>
+      <select id="pinjam_id_anggota"></select>
+      <button type="submit">Pinjamkan</button>
+    </form>
+    <table id="tabel-peminjaman">
+      <thead>
+        <tr>
+          <th>Buku</th><th>Anggota</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Status</th><th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
