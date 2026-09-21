@@ -2,11 +2,50 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import get_connection
 from datetime import date
+from functools import wraps
+from werkzeug.security import check_password_hash
+import secrets
 
 app = Flask(__name__)
 CORS(app)  # biar frontend (file HTML terpisah) boleh manggil API ini
 
+VALID_TOKENS = set()
 
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "")
+        if token not in VALID_TOKENS:
+            return jsonify({"error": "Unauthorized, silakan login dulu"}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    body = request.get_json()
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM admin WHERE username=%s", (body["username"],))
+    admin = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not admin or not check_password_hash(admin["password_hash"], body["password"]):
+        return jsonify({"error": "Username atau password salah"}), 401
+
+    token = secrets.token_hex(16)
+    VALID_TOKENS.add(token)
+    return jsonify({"token": token})
+
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    auth_header = request.headers.get("Authorization", "")
+    token = auth_header.replace("Bearer ", "")
+    VALID_TOKENS.discard(token)
+    return jsonify({"message": "Logout berhasil"})
 # ---------- BUKU ----------
 
 @app.route("/api/buku", methods=["GET"])
@@ -25,6 +64,7 @@ def get_buku():
 
 
 @app.route("/api/buku", methods=["POST"])
+@login_required
 def tambah_buku():
     body = request.get_json()
     conn = get_connection()
@@ -42,6 +82,7 @@ def tambah_buku():
 
 
 @app.route("/api/buku/<int:id_buku>", methods=["PUT"])
+@login_required
 def update_buku(id_buku):
     body = request.get_json()
     conn = get_connection()
@@ -57,6 +98,7 @@ def update_buku(id_buku):
 
 
 @app.route("/api/buku/<int:id_buku>", methods=["DELETE"])
+@login_required
 def hapus_buku(id_buku):
     conn = get_connection()
     cursor = conn.cursor()
@@ -92,6 +134,7 @@ def get_anggota():
 
 
 @app.route("/api/anggota", methods=["POST"])
+@login_required
 def tambah_anggota():
     body = request.get_json()
     conn = get_connection()
@@ -134,6 +177,7 @@ def get_peminjaman():
     return jsonify(data)
 
 @app.route("/api/peminjaman", methods=["POST"])
+@login_required
 def pinjam_buku():
     body = request.get_json()
     conn = get_connection()
@@ -159,6 +203,7 @@ def pinjam_buku():
 
 
 @app.route("/api/peminjaman/<int:id_peminjaman>/kembali", methods=["PUT"])
+@login_required
 def kembalikan_buku(id_peminjaman):
     conn = get_connection()
     cursor = conn.cursor()

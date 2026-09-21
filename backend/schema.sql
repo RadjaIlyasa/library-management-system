@@ -38,3 +38,10 @@ INSERT INTO anggota (nama, email) VALUES ('Radja', 'radja@example.com');
 INSERT INTO buku (judul, penulis, id_kategori, stok) VALUES
     ('Laskar Pelangi', 'Andrea Hirata', 1, 3),
     ('Clean Code', 'Robert C. Martin', 2, 2);
+
+-- Buat Table Admin
+CREATE TABLE IF NOT EXISTS admin (
+    id_admin INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
+)
