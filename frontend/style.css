@@ -189,3 +189,42 @@ td button {
   }
   th, td { font-size: 0.82rem; padding: 8px 6px; }
 }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-link:hover {
+  background: var(--primary-dark);
+}
+
+.btn-link:active {
+  transform: scale(0.97);
+}
+
+.btn-link.secondary {
+  background: #94a3b8;
+}
+
+.btn-link.secondary:hover {
+  background: #64748b;
+}
