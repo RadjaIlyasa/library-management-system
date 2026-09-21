@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riwayat Peminjaman Anggota</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="index.html" style="display:inline-block; margin-bottom:12px;">&larr; Kembali</a>
+  <h1>📖 Riwayat per Anggota</h1>
+
+  <section>
+    <h2>Pilih Anggota</h2>
+    <select id="pilih-anggota" style="width:100%;"></select>
+  </section>
+
+  <section>
+    <h2 id="judul-riwayat">Riwayat Peminjaman</h2>
+    <div class="table-wrap">
+      <table id="tabel-riwayat">
+        <thead>
+          <tr><th>Judul Buku</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+  <script src="riwayat.js"></script>
+</body>
+</html>

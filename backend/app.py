@@ -176,6 +176,28 @@ def get_peminjaman():
         row["tanggal_kembali"] = str(row["tanggal_kembali"]) if row["tanggal_kembali"] else None
     return jsonify(data)
 
+@app.route("/api/peminjaman/anggota/<int:id_anggota>", methods=["GET"])
+def get_riwayat_anggota(id_anggota):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT p.id_peminjaman, p.tanggal_peminjaman, p.tanggal_kembali,
+               b.judul
+        FROM peminjaman p
+        JOIN buku b ON p.id_buku = b.id_buku
+        WHERE p.id_anggota = %s
+        ORDER BY p.id_peminjaman DESC
+    """, (id_anggota,))
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    for row in data:
+        row["status"] = "Dikembalikan" if row["tanggal_kembali"] else "Dipinjam"
+        row["tanggal_peminjaman"] = str(row["tanggal_peminjaman"])
+        row["tanggal_kembali"] = str(row["tanggal_kembali"]) if row["tanggal_kembali"] else None
+    return jsonify(data)
+
 @app.route("/api/peminjaman", methods=["POST"])
 @login_required
 def pinjam_buku():
