@@ -1,10 +1,11 @@
 import mysql.connector
 
 def get_connection():
-    # Ganti sesuai konfigurasi MySQL Workbench-mu
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",
+        password="ISI_PASSWORD_MYSQL_KAMU",
         database="perpustakaan"
     )
+
+# buat file baru lagi db.py dan copas ini ke file itu 
