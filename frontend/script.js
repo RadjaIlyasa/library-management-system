@@ -1,5 +1,22 @@
 const API_URL = "http://localhost:5000/api";
 
+if (!sessionStorage.getItem("token")) {
+  window.location.href = "login.html";
+}
+
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+  };
+}
+
+document.querySelector("#btn-logout").addEventListener("click", async () => {
+  await fetch(`${API_URL}/logout`, { method: "POST", headers: authHeaders() });
+  sessionStorage.removeItem("token");
+  window.location.href = "login.html";
+});
+
 function showToast(pesan, isError = false) {
   const toast = document.querySelector("#toast");
   toast.textContent = pesan;
@@ -97,7 +114,7 @@ document.querySelector("#form-buku").addEventListener("submit", async (e) => {
     // Mode edit -> panggil PUT ke buku yang lagi diedit
     await fetch(`${API_URL}/buku/${editId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(body),
     });
     batalEdit();
@@ -105,7 +122,7 @@ document.querySelector("#form-buku").addEventListener("submit", async (e) => {
     // Mode tambah -> POST buku baru
     await fetch(`${API_URL}/buku`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(body),
     });
     e.target.reset();
@@ -116,7 +133,7 @@ document.querySelector("#form-buku").addEventListener("submit", async (e) => {
 
 async function hapusBuku(id) {
   if (!confirm("Yakin mau hapus buku ini?")) return;
-  await fetch(`${API_URL}/buku/${id}`, { method: "DELETE" });
+  await fetch(`${API_URL}/buku/${id}`, { method: "DELETE", headers: authHeaders() });
   loadBuku();
   showToast("Buku berhasil dihapus");
 }
@@ -153,7 +170,7 @@ document.querySelector("#form-anggota").addEventListener("submit", async (e) => 
   };
   await fetch(`${API_URL}/anggota`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(body),
   });
   e.target.reset();
@@ -217,7 +234,7 @@ document.querySelector("#form-peminjaman").addEventListener("submit", async (e) 
 
   const res = await fetch(`${API_URL}/peminjaman`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(body),
   });
 
@@ -235,7 +252,7 @@ document.querySelector("#form-peminjaman").addEventListener("submit", async (e) 
 });
 
 async function kembalikanBuku(id) {
-  await fetch(`${API_URL}/peminjaman/${id}/kembali`, { method: "PUT" });
+  await fetch(`${API_URL}/peminjaman/${id}/kembali`, { method: "PUT", headers: authHeaders() });
   loadBuku();
   loadDropdownBuku();
   loadPeminjaman();
