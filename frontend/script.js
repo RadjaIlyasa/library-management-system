@@ -11,11 +11,21 @@ function authHeaders() {
   };
 }
 
+
 document.querySelector("#btn-logout").addEventListener("click", async () => {
-  await fetch(`${API_URL}/logout`, { method: "POST", headers: authHeaders() });
-  sessionStorage.removeItem("token");
-  window.location.href = "login.html";
+    try {
+        await fetch(`${API_URL}/logout`, {
+            method: "POST",
+            headers: authHeaders()
+        });
+    } catch (error) {
+        console.error("Logout API gagal:", error);
+    } finally {
+        sessionStorage.removeItem("token");
+        window.location.href = "login.html";
+    }
 });
+
 
 function showToast(pesan, isError = false) {
   const toast = document.querySelector("#toast");
@@ -32,7 +42,7 @@ function showToast(pesan, isError = false) {
 let daftarBukuCache = []; // nyimpen data buku terakhir biar bisa difilter tanpa fetch ulang
 
 async function loadBuku() {
-  const res = await fetch(`${API_URL}/buku`);
+  const res = await fetch(`${API_URL}/buku`, {headers: authHeaders()});
   daftarBukuCache = await res.json();
   renderTabelBuku(daftarBukuCache);
 }
@@ -66,7 +76,7 @@ document.querySelector("#search-buku").addEventListener("input", (e) => {
 });
 
 async function loadKategori() {
-  const res = await fetch(`${API_URL}/kategori`);
+  const res = await fetch(`${API_URL}/kategori`, {headers: authHeaders()});
   const data = await res.json();
   const select = document.querySelector("#id_kategori");
   select.innerHTML = data
@@ -143,7 +153,7 @@ async function hapusBuku(id) {
 ========================================= */
 
 async function loadAnggota() {
-  const res = await fetch(`${API_URL}/anggota`);
+  const res = await fetch(`${API_URL}/anggota`, {headers: authHeaders()});
   const data = await res.json();
 
   const tbody = document.querySelector("#tabel-anggota tbody");
@@ -183,7 +193,7 @@ document.querySelector("#form-anggota").addEventListener("submit", async (e) => 
 
 // Dropdown buku di form peminjaman, diisi dari data buku yang sama kayak tabel buku
 async function loadDropdownBuku() {
-  const res = await fetch(`${API_URL}/buku`);
+  const res = await fetch(`${API_URL}/buku`, {headers: authHeaders()});
   const data = await res.json();
   const select = document.querySelector("#pinjam_id_buku");
   select.innerHTML = data
@@ -202,7 +212,7 @@ function cekStokTombolPinjam() {
 document.querySelector("#pinjam_id_buku").addEventListener("change", cekStokTombolPinjam);
 
 async function loadPeminjaman() {
-  const res = await fetch(`${API_URL}/peminjaman`);
+  const res = await fetch(`${API_URL}/peminjaman`, {headers: authHeaders()});
   const data = await res.json();
 
   const tbody = document.querySelector("#tabel-peminjaman tbody");

@@ -1,12 +1,21 @@
 const API_URL = "http://localhost:5000/api";
 
-// Guard yang sama kayak index.html — halaman ini juga cuma boleh diakses kalau udah login
-if (!sessionStorage.getItem("token")) {
-  window.location.href = "login.html";
+// Header autentikasi untuk request API
+function authHeaders() {
+    return {
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+    };
 }
 
+// Cek apakah admin sudah login
+if (!sessionStorage.getItem("token")) {
+    window.location.href = "login.html";
+}
+
+
+
 async function loadDropdownAnggota() {
-  const res = await fetch(`${API_URL}/anggota`);
+  const res = await fetch(`${API_URL}/anggota`, {headers: authHeaders()});
   const data = await res.json();
   const select = document.querySelector("#pilih-anggota");
   select.innerHTML = data
@@ -22,7 +31,7 @@ async function loadDropdownAnggota() {
 async function loadRiwayat(idAnggota, namaAnggota) {
   document.querySelector("#judul-riwayat").textContent = `Riwayat Peminjaman — ${namaAnggota}`;
 
-  const res = await fetch(`${API_URL}/peminjaman/anggota/${idAnggota}`);
+  const res = await fetch(`${API_URL}/peminjaman/anggota/${idAnggota}`, {headers: authHeaders()});
   const data = await res.json();
 
   const tbody = document.querySelector("#tabel-riwayat tbody");
